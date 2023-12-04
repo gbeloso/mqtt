@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Monitoring</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+</head>
+<body>
+    <div id="data-container"></div>
+
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('update_data', function(data) {
+            // Obtém o elemento data-container para adicionar os dados
+            const dataContainer = document.getElementById('data-container');
+
+            // Limpa os dados antigos removendo todos os filhos do container
+            while (dataContainer.firstChild) {
+                dataContainer.removeChild(dataContainer.firstChild);
+            }
+
+            // Percorre os dados e cria elementos HTML para cada item
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const itemData = data[key];
+                    const div = document.createElement("div");
+
+                    // Adiciona os dados formatados ao elemento div
+                    div.innerHTML = `<p><strong>${key}</strong></p>
+                                    <p>IP: ${itemData.ip}</p>
+                                    <p>Localization: ${itemData.localization}</p>
+                                    <p>Soil Moisture: ${itemData.soil_moisture}</p>
+                                    <p>Temperature: ${itemData.temperature}</p>
+                                    <p>Humidity: ${itemData.humidity}</p>
+                                    <p>Leaf Temperature: ${itemData.leaf_temperature}</p>`;
+
+                    // Adiciona o elemento div ao container de dados
+                    dataContainer.appendChild(div);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
